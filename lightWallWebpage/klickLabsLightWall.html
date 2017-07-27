@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+    <head>
+        <title> "Klick Labs light wall"</title>
+    </head>
+    <body>
+        <h1> Klick Labs light wall</h1>
+        <button id = "btn1" onclick = sendToWall(0,0)> btn1</button>
+        <button id = "btn2" onclick = sendToWall(1,0)> btn2</button>
+        <button id = "btn3" onclick = sendToWall(2,0)> btn3</button>
+        <button id = "btn4" onclick = sendToWall(3,0)> btn4</button>  
+        <button id = "btn5" onclick = sendToWall(4,0)> btn5</button>
+        <button id = "btn6" onclick = sendToWall(5,0)> btn6</button>
+        <button id = "btn7" onclick = sendToWall(6,0)> btn7</button>  
+        <script>
+            function sendToWall(X1,Y1){
+                var url = json(X1,Y1);
+                console.log(json(X1,Y1));
+                $.get(url,function(){})
+            }
+            function json(X,Y){
+                var x = X;
+                var y = Y;
+                var light = {X:x,Y:y,RGB:[0,255,0]};
+                //var myObject = new Object();
+                var myObject = {array:[light]};
+                var String  = "http://10.1.33.134/lightwall?led=" + JSON.stringify(myObject);
+                return String;
+            }
+        </script>   
+    </body>
+</html>    
+<script src="jquery-3.2.1.js"></script>    
+<script>
+    $(document).ready(function(){
+        
+    })
+</script>
