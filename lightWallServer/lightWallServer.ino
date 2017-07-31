@@ -78,7 +78,7 @@ void handleGenericArgs() { //Handler
 //  }
 //
 //  server.send(200, "text / plain", "worked");     //Response to the HTTP request
-  reset();
+ //reset();
   DynamicJsonBuffer jsonBuffer(200);
   //given that Strings are not char arrays in C we have to convert the argument(in json format) we get from the server in to a character array to be parsed
   int l = (int) server.arg(0).length();//we find the length of the string
