@@ -72,10 +72,29 @@
           <input onchange = updateGreen(this.value) type="range" id="G" value="255" min="0" max="255"><br>
         B <input type="text" id = "colorB" value = "255">
           <input onchange = updateBlue(this.value) type="range" id="B" value="255" min="0" max="255"><br>
+          <button class = colorSample id="colorSample"></button>
         </form>
     </body>
 
         <script>
+            document.onkeydown = function(e){
+                switch(e.keyCode){
+                    case 67://67 is the c keycode
+                        clearScreen();
+                        break;
+                    case 83://83 is the s keycode
+                        leds1D = twoDtoOneD(leds);
+                        var json  = {array:[leds1D]}
+                        var String  = "http://10.1.33.134/lightwall?led=" + JSON.stringify(json);
+                        $.get(String,function(){})
+                        break;
+                    case 82://82 is the r hotkey
+                        leds = oneDtotwoD(7,leds1D);
+                        updateWebsiteScreen();
+                        break;
+                }
+            }
+            var leds1D;
             var leds = [[{X:0,Y:0,RGB:[0,0,0]},{X:1,Y:0,RGB:[0,0,0]},{X:2,Y:0,RGB:[0,0,0]},{X:3,Y:0,RGB:[0,0,0]},{X:4,Y:0,RGB:[0,0,0]},{X:5,Y:0,RGB:[0,0,0]},{X:6,Y:0,RGB:[0,0,0]}],
                         [{X:0,Y:1,RGB:[0,0,0]},{X:1,Y:1,RGB:[0,0,0]},{X:2,Y:1,RGB:[0,0,0]},{X:3,Y:1,RGB:[0,0,0]},{X:4,Y:1,RGB:[0,0,0]},{X:5,Y:1,RGB:[0,0,0]},{X:6,Y:1,RGB:[0,0,0]}],
                         [{X:0,Y:2,RGB:[0,0,0]},{X:1,Y:2,RGB:[0,0,0]},{X:2,Y:2,RGB:[0,0,0]},{X:3,Y:2,RGB:[0,0,0]},{X:4,Y:2,RGB:[0,0,0]},{X:5,Y:2,RGB:[0,0,0]},{X:6,Y:2,RGB:[0,0,0]}],
@@ -86,7 +105,7 @@
 
             function sendToWall(X1,Y1){
                 var url = json(X1,Y1);
-                console.log(leds[Y1][X1].RGB);
+                //console.log(leds[Y1][X1].RGB);
                 $.get(url,function(){})
             }
             function json(X,Y){
@@ -94,6 +113,11 @@
                 var R = document.getElementById("colorR").value;
                 var G = document.getElementById("colorG").value;
                 var B = document.getElementById("colorB").value;
+                if(leds[Y][X].RGB[0] == G && leds[Y][X].RGB[1] == R && leds[Y][X].RGB[2] == B){
+                    R = 0;
+                    G = 0;
+                    B = 0;
+                }
                 leds[Y][X].RGB = [G,R,B];
                 var hex = "#" + rgbToHex(R,G,B);
                 document.getElementById(id).style.backgroundColor = hex;
@@ -149,7 +173,7 @@
                 }
                 var clearCommand = "http://10.1.33.134/lightwall?led={array:[{X:0,Y:0,RGB:[0,0,0]}, {X:0,Y:1,RGB:[0,0,0]}, {X:0,Y:2,RGB:[0,0,0]}, {X:0,Y:3,RGB:[0,0,0]}, {X:0,Y:4,RGB:[0,0,0]}, {X:0,Y:5,RGB:[0,0,0]}, {X:0,Y:6,RGB:[0,0,0]}, {X:1,Y:0,RGB:[0,0,0]}, {X:1,Y:1,RGB:[0,0,0]}, {X:1,Y:2,RGB:[0,0,0]}, {X:1,Y:3,RGB:[0,0,0]}, {X:1,Y:4,RGB:[0,0,0]}, {X:1,Y:5,RGB:[0,0,0]}, {X:1,Y:6,RGB:[0,0,0]}, {X:2,Y:0,RGB:[0,0,0]}, {X:2,Y:1,RGB:[0,0,0]}, {X:2,Y:2,RGB:[0,0,0]}, {X:2,Y:3,RGB:[0,0,0]}, {X:2,Y:4,RGB:[0,0,0]}, {X:2,Y:5,RGB:[0,0,0]}, {X:2,Y:6,RGB:[0,0,0]}, {X:3,Y:0,RGB:[0,0,0]}, {X:3,Y:1,RGB:[0,0,0]}, {X:3,Y:2,RGB:[0,0,0]}, {X:3,Y:3,RGB:[0,0,0]}, {X:3,Y:4,RGB:[0,0,0]}, {X:3,Y:5,RGB:[0,0,0]}, {X:3,Y:6,RGB:[0,0,0]}, {X:4,Y:0,RGB:[0,0,0]}, {X:4,Y:1,RGB:[0,0,0]}, {X:4,Y:2,RGB:[0,0,0]}, {X:4,Y:3,RGB:[0,0,0]}, {X:4,Y:4,RGB:[0,0,0]}, {X:4,Y:5,RGB:[0,0,0]}, {X:4,Y:6,RGB:[0,0,0]}, {X:5,Y:0,RGB:[0,0,0]}, {X:5,Y:1,RGB:[0,0,0]}, {X:5,Y:2,RGB:[0,0,0]}, {X:5,Y:3,RGB:[0,0,0]}, {X:5,Y:4,RGB:[0,0,0]}, {X:5,Y:5,RGB:[0,0,0]}, {X:5,Y:6,RGB:[0,0,0]}, {X:6,Y:0,RGB:[0,0,0]}, {X:6,Y:1,RGB:[0,0,0]}, {X:6,Y:2,RGB:[0,0,0]}, {X:6,Y:3,RGB:[0,0,0]}, {X:6,Y:4,RGB:[0,0,0]}, {X:6,Y:5,RGB:[0,0,0]}, {X:6,Y:6,RGB:[0,0,0]}]}";
                 $.get(clearCommand, function(msg){
-                    console.log(msg);
+                    //console.log(msg);
                 })
                 for(i = 0; i < 7; i++){
                     for(j = 0; j < 7; j++){
@@ -181,12 +205,45 @@
             }           
             function updateRed(red){
                 document.getElementById("colorR").value = red;
+                var hex = "#" + rgbToHex(document.getElementById("colorR").value,document.getElementById("colorG").value,document.getElementById("colorB").value)
+                document.getElementById("colorSample").style.backgroundColor = hex;
             }
             function updateGreen(green){
                 document.getElementById("colorG").value = green;
+                var hex = "#" + rgbToHex(document.getElementById("colorR").value,document.getElementById("colorG").value,document.getElementById("colorB").value)
+                document.getElementById("colorSample").style.backgroundColor = hex;                
             }
             function updateBlue(blue){
                 document.getElementById("colorB").value = blue;
+                var hex = "#" + rgbToHex(document.getElementById("colorR").value,document.getElementById("colorG").value,document.getElementById("colorB").value)
+                document.getElementById("colorSample").style.backgroundColor = hex;               
+            }
+            function totalArrayLength(){
+                var totalLength = 0;
+                for(i = 0; i < leds.length; i++){
+                    totalLength += leds[i].length;
+                }
+                return totalLength;
+            }
+            function twoDtoOneD(twoDArray){
+                var i = 0;;
+                var oneDArray; 
+                for(j = 0; j < twoDArray.length; j++){
+                    for(k = 0; k < twoDArray[j].lenght; k++){
+                        oneDArray[i] = twoDArray[j][k];
+                        i++;
+                    }
+                }
+            }
+            function oneDtotwoD(itemsperRow, oneDArray){
+                var i = 0;
+                var twoDArray;
+                for(j = 0; j < oneDArray.length/itemsperRow; j++){
+                    for(k = 0; k < itemsperRow; k++){
+                        twoDArray[j][k] = oneDArray[i];
+                    }
+                }
+                return twoDArray;
             }
         </script>   
     </body>

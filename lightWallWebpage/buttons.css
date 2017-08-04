@@ -9,4 +9,11 @@ font-family: 'Muli', sans-serif;
 border-radius: 15px;
 border-color: #000000;
 }
+.colorSample{
+    height: 50px;
+    width: 285px;
+    background-color: #ffffff;
+    border-color: #ffffff;
+    border-radius: 10px;
+}
 
