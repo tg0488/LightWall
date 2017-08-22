@@ -117,7 +117,7 @@ void state_handler() {
   }
   response.remove(response.length() - 1); //remove the last trailing comma
   response += "]}";
-  server.send(200, "application / json ", response);
+  server.send(200, "application/json ", response);
 }
 
 
@@ -151,7 +151,7 @@ void reifyWallState () {
       int G = wallState[X][Y][1];
       int B = wallState[X][Y][2];
 
-      pixels.setPixelColor(actualWall[Y][X], pixels.Color(R, G, B));
+      pixels.setPixelColor(actualWall[X][Y], G, R, B); // I have NO fucking idea why this is GRB and not RGB!!!!
       pixels.show();
     }
   }
