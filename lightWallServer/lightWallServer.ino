@@ -25,15 +25,15 @@ int wallState [wallHeight][wallWidth][3] = {
   {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}},
 };
 
-int mappedWall [wallHeight][wallWidth] = {
-  {42, 43, 44, 45, 46, 47, 48},
-  {35, 36, 37, 38, 39, 40, 41},
-  {27, 28, 29, 30, 31, 32, 33},
-  {21, 22, 23, 24, 25, 26, 27},
-  {14, 15, 16, 17, 18, 19, 20},
-  {7, 8, 9, 10, 11, 12, 13},
-  {0, 1, 2, 3, 4, 5, 6}
-};
+//int mappedWall [wallHeight][wallWidth] = {
+//  {42, 43, 44, 45, 46, 47, 48},
+//  {35, 36, 37, 38, 39, 40, 41},
+//  {27, 28, 29, 30, 31, 32, 33},
+//  {21, 22, 23, 24, 25, 26, 27},
+//  {14, 15, 16, 17, 18, 19, 20},
+//  {7, 8, 9, 10, 11, 12, 13},
+//  {0, 1, 2, 3, 4, 5, 6}
+//};
 
 
 int actualWall [wallHeight][wallWidth] = {
@@ -71,7 +71,6 @@ void httpHandler() {
 }
 
 void setup() {
-
   pixels.begin();
   pixels.show();
   Serial.begin(115200);
@@ -81,12 +80,11 @@ void setup() {
 }
 
 void loop() {
-  server.handleClient();    //Handling of incoming requests
+  server.handleClient(); //Handling of incoming requests
 }
 
 
 void lightwall_handler() { //Handler
-
   DynamicJsonBuffer jsonBuffer(200);
   //given that Strings are not char arrays in C we have to convert the argument(in json format) we get from the server in to a character array to be parsed
   int l = (int) server.arg(0).length(); //we find the length of the string
@@ -95,7 +93,7 @@ void lightwall_handler() { //Handler
   Serial.println(json);
   JsonObject& light = jsonBuffer.parseObject(json);//the first step in parsing our json format charcter array is creating a json object which is the parsed charcter array
   if (!light.success()) {
-    server.send(500, "text/plain", "error");
+    server.send(500, "text/plain", "error parsing json object!");
     return;
   }
 
@@ -129,10 +127,10 @@ void state_handler() {
 
 void reset() {
   for (int X = 0; X < wallWidth; X++) {
-    for (int Y = 0; Y < wallHeight; X++) {
-      wallState[Y][X][0] = 0;
-      wallState[Y][X][0] = 0;
-      wallState[Y][X][0] = 0;
+    for (int Y = 0; Y < wallHeight; Y++) {
+      int R = wallState[X][Y][0];
+      int G = wallState[X][Y][1];
+      int B = wallState[X][Y][2];
     }
   }
   reifyWallState();
@@ -145,14 +143,14 @@ void reset_handler() {
 
 
 void ledON(int X, int Y, int R, int G, int B) {
-  wallState[Y][X][0] = R;
-  wallState[Y][X][0] = G;
-  wallState[Y][X][0] = B;
+  wallState[X][Y][0] = R;
+  wallState[X][Y][0] = G;
+  wallState[X][Y][0] = B;
 }
 
 void reifyWallState () {
   for (int X = 0; X < wallWidth; X++) {
-    for (int Y = 0; Y < wallHeight; X++) {
+    for (int Y = 0; Y < wallHeight; Y++) {
       int R = wallState[X][Y][0];
       int G = wallState[X][Y][1];
       int B = wallState[X][Y][2];
