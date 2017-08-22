@@ -120,17 +120,26 @@ void lightwall_handler() { //Handler
 
 void state_handler() {
   String response = String("{\"array\": [");
+  for (int X = 0; X < wallWidth; X++) {
+    for (int Y = 0; Y < wallHeight; Y++) {
+      int R = wallState[X][Y][0];
+      int G = wallState[X][Y][1];
+      int B = wallState[X][Y][2];
+      response += String("{\"X\": " + String(X) + ",\"Y\":" + String(Y) + ",\"RGB\":[" + String(R) + "," + String(G) + "," + String(B) + "]},");
+    }
+  }
+  response.remove(response.length() - 1); //remove the last trailing comma
   response += "]}";
-  server.send(200, "application/json ", response);
+  server.send(200, "application / json ", response);
 }
 
 
 void reset() {
   for (int X = 0; X < wallWidth; X++) {
     for (int Y = 0; Y < wallHeight; Y++) {
-      int R = wallState[X][Y][0];
-      int G = wallState[X][Y][1];
-      int B = wallState[X][Y][2];
+      wallState[X][Y][0] = 0;
+      wallState[X][Y][1] = 0;
+      wallState[X][Y][2] = 0;
     }
   }
   reifyWallState();
@@ -138,14 +147,14 @@ void reset() {
 
 void reset_handler() {
   reset();
-  server.send(200, "text/plain", "ok");
+  server.send(200, "text / plain", "ok");
 }
 
 
 void ledON(int X, int Y, int R, int G, int B) {
   wallState[X][Y][0] = R;
-  wallState[X][Y][0] = G;
-  wallState[X][Y][0] = B;
+  wallState[X][Y][1] = G;
+  wallState[X][Y][2] = B;
 }
 
 void reifyWallState () {
