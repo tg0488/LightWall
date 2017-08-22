@@ -25,17 +25,6 @@ int wallState [wallHeight][wallWidth][3] = {
   {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}},
 };
 
-//int mappedWall [wallHeight][wallWidth] = {
-//  {42, 43, 44, 45, 46, 47, 48},
-//  {35, 36, 37, 38, 39, 40, 41},
-//  {27, 28, 29, 30, 31, 32, 33},
-//  {21, 22, 23, 24, 25, 26, 27},
-//  {14, 15, 16, 17, 18, 19, 20},
-//  {7, 8, 9, 10, 11, 12, 13},
-//  {0, 1, 2, 3, 4, 5, 6}
-//};
-
-
 int actualWall [wallHeight][wallWidth] = {
   {42, 43, 44, 45, 46, 47, 48},
   {41, 40, 39, 38, 37, 36, 35},
@@ -61,6 +50,7 @@ void connectToWifi() {
   Serial.println(WiFi.localIP());  //Print the local IP to access the server
 }
 
+
 void httpHandler() {
   server.on("/lightwall", lightwall_handler); //Associate the handler function to the path
   server.on("/reset", reset_handler); //Associate the handler function to the path
@@ -74,7 +64,7 @@ void setup() {
   pixels.begin();
   pixels.show();
   Serial.begin(115200);
-
+  
   connectToWifi();
   httpHandler();
 }
@@ -84,10 +74,11 @@ void loop() {
 }
 
 
-void lightwall_handler() { //Handler
+void lightwall_handler() {
   DynamicJsonBuffer jsonBuffer(200);
   //given that Strings are not char arrays in C we have to convert the argument(in json format) we get from the server in to a character array to be parsed
   int l = (int) server.arg(0).length(); //we find the length of the string
+  // This means that we really don't care what the first argument is called!
   char json[l + 1]; //we initialize the array
   server.arg(0).toCharArray(json, l + 1); //We used an arduino built in function to change the server argument in to json format
   Serial.println(json);
@@ -104,12 +95,7 @@ void lightwall_handler() { //Handler
     int R = light["array"][i]["RGB"][0];//R value
     int G = light["array"][i]["RGB"][1];//G value
     int B = light["array"][i]["RGB"][2];//B value
-    Serial.println(X);
-    Serial.println(Y);
-    Serial.println(R);
-    Serial.println(G);
-    Serial.println(B);
-    ledON(X, Y, R, G, B);
+    setPixelColor(X, Y, R, G, B);
   }
   reifyWallState();
 
@@ -119,6 +105,7 @@ void lightwall_handler() { //Handler
 
 
 void state_handler() {
+  // Yes, it's ghetto. No, I don't care.
   String response = String("{\"array\": [");
   for (int X = 0; X < wallWidth; X++) {
     for (int Y = 0; Y < wallHeight; Y++) {
@@ -150,14 +137,14 @@ void reset_handler() {
   server.send(200, "text / plain", "ok");
 }
 
-
-void ledON(int X, int Y, int R, int G, int B) {
+void setPixelColor(int X, int Y, int R, int G, int B) {
   wallState[X][Y][0] = R;
   wallState[X][Y][1] = G;
   wallState[X][Y][2] = B;
 }
 
 void reifyWallState () {
+  // reify (verb): make (something abstract) more concrete or real.
   for (int X = 0; X < wallWidth; X++) {
     for (int Y = 0; Y < wallHeight; Y++) {
       int R = wallState[X][Y][0];
