@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8"/>
+        <title>Document</title>
+        <style>
+         .pixel {
+             width: 70px;
+             height: 70px;
+             /* border: 1px solid black; */
+             background-color: #000000;
+             flex-basis: 14%;
+             box-shadow:
+                 1px 0 0 0 #CCC,
+                 0 1px 0 0 #CCC,
+                 1px 1px 0 0 #CCC,   /* Just to fix the corner */
+                 1px 0 0 0 #CCC inset,
+                 0 1px 0 0 #CCC inset;
+         }
+         .container {
+             display: flex; /* or inline-flex */
+             flex-wrap: wrap;
+             width: 490px;
+             /* background-color: yellow; */
+         }
+         .color {
+             flex-basis: 14%;
+             width: 70px;
+             height: 70px;
+             box-shadow:
+                 1px 0 0 0 #888,
+                 0 1px 0 0 #888,
+                 1px 1px 0 0 #888,   /* Just to fix the corner */
+                 1px 0 0 0 #888 inset,
+                 0 1px 0 0 #888 inset;
+         }
+        </style>
+    </head>
+    <body>
+        <p>
+            <button onClick="reset()">Reset</button>
+            <button onClick="receive()">Receive</button>
+        </p>
+
+        <p>
+        Color Picker:
+        <div class="container">
+            <div class="color" data-color="#000000" style="background-color:#000000" id="defaultColor"> </div>
+            <div class="color" data-color="#ffffff" style="background-color:#ffffff"> </div>
+            <div class="color" data-color="#ff0000" style="background-color:#ff0000"> </div>
+            <div class="color" data-color="#00ff00" style="background-color:#00ff00"> </div>
+            <div class="color" data-color="#0000ff" style="background-color:#0000ff"> </div>
+            <div class="color" data-color="#ffff00" style="background-color:#ffff00"> </div>
+            <div class="color" data-color="#00ffff" style="background-color:#00ffff"> </div>
+        </div>
+        </p>
+
+        <p>
+        Light wall:
+            <div id="container" class="container">
+                <div id="x0y0" data-x=0 data-y=0 class="pixel" > &nbsp; </div>
+                <div id="x0y1" data-x=0 data-y=1 class="pixel" > &nbsp; </div>
+                <div id="x0y2" data-x=0 data-y=2 class="pixel" > &nbsp; </div>
+                <div id="x0y3" data-x=0 data-y=3 class="pixel" > &nbsp; </div>
+                <div id="x0y4" data-x=0 data-y=4 class="pixel" > &nbsp; </div>
+                <div id="x0y5" data-x=0 data-y=5 class="pixel" > &nbsp; </div>
+                <div id="x0y6" data-x=0 data-y=6 class="pixel" > &nbsp; </div>
+                <div id="x1y0" data-x=1 data-y=0 class="pixel" > &nbsp; </div>
+                <div id="x1y1" data-x=1 data-y=1 class="pixel" > &nbsp; </div>
+                <div id="x1y2" data-x=1 data-y=2 class="pixel" > &nbsp; </div>
+                <div id="x1y3" data-x=1 data-y=3 class="pixel" > &nbsp; </div>
+                <div id="x1y4" data-x=1 data-y=4 class="pixel" > &nbsp; </div>
+                <div id="x1y5" data-x=1 data-y=5 class="pixel" > &nbsp; </div>
+                <div id="x1y6" data-x=1 data-y=6 class="pixel" > &nbsp; </div>
+                <div id="x2y0" data-x=2 data-y=0 class="pixel" > &nbsp; </div>
+                <div id="x2y1" data-x=2 data-y=1 class="pixel" > &nbsp; </div>
+                <div id="x2y2" data-x=2 data-y=2 class="pixel" > &nbsp; </div>
+                <div id="x2y3" data-x=2 data-y=3 class="pixel" > &nbsp; </div>
+                <div id="x2y4" data-x=2 data-y=4 class="pixel" > &nbsp; </div>
+                <div id="x2y5" data-x=2 data-y=5 class="pixel" > &nbsp; </div>
+                <div id="x2y6" data-x=2 data-y=6 class="pixel" > &nbsp; </div>
+                <div id="x3y0" data-x=3 data-y=0 class="pixel" > &nbsp; </div>
+                <div id="x3y1" data-x=3 data-y=1 class="pixel" > &nbsp; </div>
+                <div id="x3y2" data-x=3 data-y=2 class="pixel" > &nbsp; </div>
+                <div id="x3y3" data-x=3 data-y=3 class="pixel" > &nbsp; </div>
+                <div id="x3y4" data-x=3 data-y=4 class="pixel" > &nbsp; </div>
+                <div id="x3y5" data-x=3 data-y=5 class="pixel" > &nbsp; </div>
+                <div id="x3y6" data-x=3 data-y=6 class="pixel" > &nbsp; </div>
+                <div id="x4y0" data-x=4 data-y=0 class="pixel" > &nbsp; </div>
+                <div id="x4y1" data-x=4 data-y=1 class="pixel" > &nbsp; </div>
+                <div id="x4y2" data-x=4 data-y=2 class="pixel" > &nbsp; </div>
+                <div id="x4y3" data-x=4 data-y=3 class="pixel" > &nbsp; </div>
+                <div id="x4y4" data-x=4 data-y=4 class="pixel" > &nbsp; </div>
+                <div id="x4y5" data-x=4 data-y=5 class="pixel" > &nbsp; </div>
+                <div id="x4y6" data-x=4 data-y=6 class="pixel" > &nbsp; </div>
+                <div id="x5y0" data-x=5 data-y=0 class="pixel" > &nbsp; </div>
+                <div id="x5y1" data-x=5 data-y=1 class="pixel" > &nbsp; </div>
+                <div id="x5y2" data-x=5 data-y=2 class="pixel" > &nbsp; </div>
+                <div id="x5y3" data-x=5 data-y=3 class="pixel" > &nbsp; </div>
+                <div id="x5y4" data-x=5 data-y=4 class="pixel" > &nbsp; </div>
+                <div id="x5y5" data-x=5 data-y=5 class="pixel" > &nbsp; </div>
+                <div id="x5y6" data-x=5 data-y=6 class="pixel" > &nbsp; </div>
+                <div id="x6y0" data-x=6 data-y=0 class="pixel" > &nbsp; </div>
+                <div id="x6y1" data-x=6 data-y=1 class="pixel" > &nbsp; </div>
+                <div id="x6y2" data-x=6 data-y=2 class="pixel" > &nbsp; </div>
+                <div id="x6y3" data-x=6 data-y=3 class="pixel" > &nbsp; </div>
+                <div id="x6y4" data-x=6 data-y=4 class="pixel" > &nbsp; </div>
+                <div id="x6y5" data-x=6 data-y=5 class="pixel" > &nbsp; </div>
+                <div id="x6y6" data-x=6 data-y=6 class="pixel" > &nbsp; </div>
+
+        </div>
+        </p>
+
+        <script
+			      src="https://code.jquery.com/jquery-3.2.1.min.js"
+			      integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+			      crossorigin="anonymous"></script>
+
+        <script>
+         var color = "#000000";
+         var lightwallEndpoint = "http://10.1.33.134/lightwall";
+         var resetEndpoint = "http://10.1.33.134/reset";
+         var stateEndpoint = "http://10.1.33.134/state";
+
+         $("#defaultColor").css("border","2px solid gray");
+
+         function reset(){
+             $.get(resetEndpoint);
+             $(".pixel").css("background-color","black");
+         }
+
+         function hexToRgb(hex) {
+             var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+             return result ? [  parseInt(result[1], 16)
+                              , parseInt(result[2], 16)
+                              , parseInt(result[3], 16) ] : null;
+         }
+
+         function rgbToHex(r, g, b) {
+             return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+         }
+
+
+         function receive(){
+             $.get(stateEndpoint, function(state){
+                 console.log(state);
+                 for (let pixel of state.array) {
+                     let id = "#x"+pixel.X+"y"+pixel.Y;
+                     let hexColor = rgbToHex(pixel.RGB[0], pixel.RGB[1],pixel.RGB[2]);
+                     $(id).data("color", hexColor);
+                     $(id).css("background-color", hexColor);
+                 }
+             });
+         }
+         receive();
+
+         function sendToLightWall(x,y,hex) {
+             var pixel = {X:x,Y:y,RGB:hexToRgb(hex)};
+             var data = {array: [pixel]};
+             var dataString= JSON.stringify(data);
+             $.get(lightwallEndpoint, {led: dataString}, ()=>{});
+         }
+
+         $(".pixel").click(function(e){
+             e.preventDefault();
+             e.stopPropagation();
+
+             let x = $(this).data("x");
+             let y = $(this).data("y");
+             $(this).data("color", color);
+             $(this).css("background-color", color);
+             sendToLightWall(x,y,color);
+         });
+
+         $(".color").click(function(){
+             color = $(this).data("color");
+             $(".color").css("border","none");
+             $(this).css("border","2px solid gray");
+         });
+
+
+        </script>
+    </body>
+</html>
