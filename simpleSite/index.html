@@ -1,59 +1,69 @@
-<!doctype html>
-<html lang="en">
+    <!doctype html>
+    <html lang="en">
     <head>
-        <meta charset="UTF-8"/>
-        <title>Document</title>
-        <style>
-         .pixel {
-             width: 70px;
-             height: 70px;
-             /* border: 1px solid black; */
-             background-color: #000000;
-             flex-basis: 14%;
-             box-shadow:
-                 1px 0 0 0 #CCC,
-                 0 1px 0 0 #CCC,
-                 1px 1px 0 0 #CCC,   /* Just to fix the corner */
-                 1px 0 0 0 #CCC inset,
-                 0 1px 0 0 #CCC inset;
-         }
-         .container {
-             display: flex; /* or inline-flex */
-             flex-wrap: wrap;
-             width: 490px;
-             /* background-color: yellow; */
-         }
-         .color {
-             flex-basis: 14%;
-             width: 70px;
-             height: 70px;
-             box-shadow:
-                 1px 0 0 0 #888,
-                 0 1px 0 0 #888,
-                 1px 1px 0 0 #888,   /* Just to fix the corner */
-                 1px 0 0 0 #888 inset,
-                 0 1px 0 0 #888 inset;
-         }
-        </style>
+    <meta charset="UTF-8"/>
+    <title>Lightwall</title>
+    <style>
+    .pixel {
+        width: 70px;
+        height: 70px;
+        /* border: 1px solid black; */
+        background-color: #000000;
+        flex-basis: 14%;
+        box-shadow:
+        1px 0 0 0 #CCC,
+        0 1px 0 0 #CCC,
+        1px 1px 0 0 #CCC,   /* Just to fix the corner */
+        1px 0 0 0 #CCC inset,
+        0 1px 0 0 #CCC inset;
+    }
+    .container {
+        display: flex; /* or inline-flex */
+        flex-wrap: wrap;
+        width: 490px;
+        /* background-color: yellow; */
+    }
+
+    .color {
+        flex-basis: 14%;
+        width: 70px;
+        height: 70px;
+        box-shadow:
+        1px 0 0 0 #888,
+        0 1px 0 0 #888,
+        1px 1px 0 0 #888,   /* Just to fix the corner */
+        1px 0 0 0 #888 inset,
+        0 1px 0 0 #888 inset;
+    }
+
+    .hidden {
+        display:none;
+    }
+</style>
     </head>
     <body>
-        <p>
-            <button onClick="reset()">Reset</button>
-            <button onClick="receive()">Receive</button>
-        </p>
+    <p>
+    <button onClick="reset()">Reset</button>
+    <button onClick="receive()">Receive</button>
+    <button onClick="forcePush()">Force Overwrite</button>
+    <button onClick="downloadCurrent()">Download </button>
+    <button onClick="upload()">Upload </button>
 
-        <p>
-        Color Picker:
-        <div class="container">
-            <div class="color" data-color="#000000" style="background-color:#000000" id="defaultColor"> </div>
-            <div class="color" data-color="#ffffff" style="background-color:#ffffff"> </div>
-            <div class="color" data-color="#ff0000" style="background-color:#ff0000"> </div>
-            <div class="color" data-color="#00ff00" style="background-color:#00ff00"> </div>
-            <div class="color" data-color="#0000ff" style="background-color:#0000ff"> </div>
-            <div class="color" data-color="#ffff00" style="background-color:#ffff00"> </div>
-            <div class="color" data-color="#00ffff" style="background-color:#00ffff"> </div>
-        </div>
-        </p>
+    <input type="file" class="hidden" id="upload" name="upload" />
+    </p>
+
+    <p>
+    Color Picker:
+    <div class="container">
+    <div class="color" data-color="#000000" style="background-color:#000000" id="defaultColor"> </div>
+    <div class="color" data-color="#ffffff" style="background-color:#ffffff"> </div>
+    <div class="color" data-color="#ff0000" style="background-color:#ff0000"> </div>
+    <div class="color" data-color="#00ff00" style="background-color:#00ff00"> </div>
+    <div class="color" data-color="#0000ff" style="background-color:#0000ff"> </div>
+    <div class="color" data-color="#ffff00" style="background-color:#ffff00"> </div>
+    <div class="color" data-color="#00ffff" style="background-color:#00ffff"> </div>
+    </div>
+    </p>
 
         <p>
         Light wall:
@@ -111,74 +121,145 @@
         </div>
         </p>
 
-        <script
-			      src="https://code.jquery.com/jquery-3.2.1.min.js"
-			      integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-			      crossorigin="anonymous"></script>
+    <script
+src="https://code.jquery.com/jquery-3.2.1.min.js"
+integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+crossorigin="anonymous"></script>
 
-        <script>
-         var color = "#000000";
-         var lightwallEndpoint = "http://10.1.33.134/lightwall";
-         var resetEndpoint = "http://10.1.33.134/reset";
-         var stateEndpoint = "http://10.1.33.134/state";
+    <script>
+    var color = "#000000";
+var lightwallEndpoint = "http://10.1.33.134/lightwall";
+var resetEndpoint = "http://10.1.33.134/reset";
+var stateEndpoint = "http://10.1.33.134/state";
 
-         $("#defaultColor").css("border","2px solid gray");
+$("#defaultColor").css("border","2px solid gray");
 
-         function reset(){
-             $.get(resetEndpoint);
-             $(".pixel").css("background-color","black");
-         }
+function reset(){
+    $.get(resetEndpoint);
+    $(".pixel").css("background-color","black");
+}
 
-         function hexToRgb(hex) {
-             var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-             return result ? [  parseInt(result[1], 16)
-                              , parseInt(result[2], 16)
-                              , parseInt(result[3], 16) ] : null;
-         }
+function hexToRgb(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? [  parseInt(result[1], 16)
+                       , parseInt(result[2], 16)
+                       , parseInt(result[3], 16) ] : null;
+}
 
-         function rgbToHex(r, g, b) {
-             return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-         }
+function rgbToHex(r, g, b) {
+    return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+}
+
+function displayState(state) {
+    for (let pixel of state.array) {
+        let id = "#x"+pixel.X+"y"+pixel.Y;
+        let hexColor = rgbToHex(pixel.RGB[0], pixel.RGB[1],pixel.RGB[2]);
+        $(id).data("color", hexColor);
+        $(id).css("background-color", hexColor);
+    }
+}
+
+function receive(){
+    $.get(stateEndpoint, function(state){
+        displayState(state);
+    });
+}
+
+receive();
+
+function sendToLightWall(x,y,hex) {
+    var pixel = {X:x,Y:y,RGB:hexToRgb(hex)};
+    var data = {array: [pixel]};
+    var dataString= JSON.stringify(data);
+    $.get(lightwallEndpoint, {led: dataString}, ()=>{});
+}
+
+$(".pixel").click(function(e){
+    e.preventDefault();
+    e.stopPropagation();
+
+    let x = $(this).data("x");
+    let y = $(this).data("y");
+    $(this).data("color", color);
+    $(this).css("background-color", color);
+    sendToLightWall(x,y,color);
+});
+
+$(".color").click(function(){
+    color = $(this).data("color");
+    $(".color").css("border","none");
+    $(this).css("border","2px solid gray");
+});
+
+function getCurrentState(){
+    var pixels = [];
+
+    $(".pixel").each(function(idx,el) {
+        let x = $(el).data("x");
+        let y = $(el).data("y");
+        let color = $(el).data("color");
+        var pixel = {X:x,Y:y,RGB:hexToRgb(color)};
+        pixels.push(pixel);
+    });
+
+    var data = {array: pixels};
+    return data;
+}
+
+function forcePush (state) {
+    state = state || getCurrentState();
+    $.get(lightwallEndpoint, {led: JSON.stringify(state)}, _=>receive());
+}
+
+// http://bgrins.github.io/devtools-snippets/#console-save
+(function(console){
+    console.save = function(data, filename){
+        if(!data) {
+            console.error('Console.save: No data');
+            return;
+        }
+        if(!filename) filename = 'console.json';
+        if(typeof data === "object"){
+            data = JSON.stringify(data);
+        }
+        var blob = new Blob([data], {type: 'text/json'}),
+            e    = document.createEvent('MouseEvents'),
+            a    = document.createElement('a');
+        a.download = filename;
+        a.href = window.URL.createObjectURL(blob);
+        a.dataset.downloadurl =  ['text/json', a.download, a.href].join(':');
+        e.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+        a.dispatchEvent(e);
+    };
+})(console);
+
+function downloadCurrent () {
+    var state = getCurrentState();
+    var name = window.prompt("What do you want to save your pretty drawing as?", "lightwall.json");
+    if(name) {
+        console.save(state, name);
+    }
+}
+
+function upload() {
+    $("#upload").trigger("click");
+    //
+}
+
+$("#upload").change(function(event) {
+    var reader = new FileReader();
+    reader.onload = function(event) {
+        try {
+            var state = JSON.parse(event.target.result);
+            displayState(state);
+        } catch(err) {
+            alert("There has been a problem with the file you were uploading!");
+        }
+    };
+    reader.readAsText(event.target.files[0]);
+});
 
 
-         function receive(){
-             $.get(stateEndpoint, function(state){
-                 console.log(state);
-                 for (let pixel of state.array) {
-                     let id = "#x"+pixel.X+"y"+pixel.Y;
-                     let hexColor = rgbToHex(pixel.RGB[0], pixel.RGB[1],pixel.RGB[2]);
-                     $(id).data("color", hexColor);
-                     $(id).css("background-color", hexColor);
-                 }
-             });
-         }
-         receive();
-
-         function sendToLightWall(x,y,hex) {
-             var pixel = {X:x,Y:y,RGB:hexToRgb(hex)};
-             var data = {array: [pixel]};
-             var dataString= JSON.stringify(data);
-             $.get(lightwallEndpoint, {led: dataString}, ()=>{});
-         }
-
-         $(".pixel").click(function(e){
-             e.preventDefault();
-             e.stopPropagation();
-
-             let x = $(this).data("x");
-             let y = $(this).data("y");
-             $(this).data("color", color);
-             $(this).css("background-color", color);
-             sendToLightWall(x,y,color);
-         });
-
-         $(".color").click(function(){
-             color = $(this).data("color");
-             $(".color").css("border","none");
-             $(this).css("border","2px solid gray");
-         });
-
-
-        </script>
+</script>
     </body>
-</html>
+    </html>
