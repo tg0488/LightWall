@@ -2,6 +2,13 @@
 #include <ESP8266WebServer.h>
 #include <ArduinoJson.h>
 
+
+// for free memory function
+extern "C" {
+#include "user_interface.h"
+}
+
+
 ESP8266WebServer server(80);   //Web server object. Will be listening in port 80 (default for HTTP)
 
 #include <Adafruit_NeoPixel.h>
@@ -64,24 +71,32 @@ void setup() {
   pixels.begin();
   pixels.show();
   Serial.begin(115200);
-  
+
   connectToWifi();
   httpHandler();
 }
 
+void printMemoryUsage() {
+  char str[11];
+  uint32_t free = system_get_free_heap_size();
+  snprintf(str, sizeof str, "%lu", (unsigned long)free);
+  Serial.println(str);
+}
+
 void loop() {
   server.handleClient(); //Handling of incoming requests
+  printMemoryUsage();
 }
 
 
 void lightwall_handler() {
-  DynamicJsonBuffer jsonBuffer(200);
+  DynamicJsonBuffer jsonBuffer(6436);
   //given that Strings are not char arrays in C we have to convert the argument(in json format) we get from the server in to a character array to be parsed
   int l = (int) server.arg(0).length(); //we find the length of the string
   // This means that we really don't care what the first argument is called!
   char json[l + 1]; //we initialize the array
   server.arg(0).toCharArray(json, l + 1); //We used an arduino built in function to change the server argument in to json format
-  Serial.println(json);
+  //  Serial.println(json);
   JsonObject& light = jsonBuffer.parseObject(json);//the first step in parsing our json format charcter array is creating a json object which is the parsed charcter array
   if (!light.success()) {
     server.send(500, "text/plain", "error parsing json object!");
@@ -106,17 +121,30 @@ void lightwall_handler() {
 
 void state_handler() {
   // Yes, it's ghetto. No, I don't care.
-  String response = String("{\"array\": [");
+  String response;
+  response.reserve(1500); // prevent heap fragmentation
+  response = F("{\"array\": [");
   for (int X = 0; X < wallWidth; X++) {
     for (int Y = 0; Y < wallHeight; Y++) {
       int R = wallState[X][Y][0];
       int G = wallState[X][Y][1];
       int B = wallState[X][Y][2];
-      response += String("{\"X\": " + String(X) + ",\"Y\":" + String(Y) + ",\"RGB\":[" + String(R) + "," + String(G) + "," + String(B) + "]},");
+      response += F("{\"X\": ");
+      response += X;
+      response += F(",\"Y\":");
+      response += Y;
+      response += F(",\"RGB\":[");
+      response += R;
+      response += F(",");
+      response += G;
+      response += F(",");
+      response += B;
+      response += F("]},");
     }
   }
   response.remove(response.length() - 1); //remove the last trailing comma
-  response += "]}";
+  response += F("]}");
+  //  Serial.println(response);
   server.send(200, "application/json ", response);
 }
 
@@ -134,7 +162,7 @@ void reset() {
 
 void reset_handler() {
   reset();
-  server.send(200, "text / plain", "ok");
+  server.send(200, "text/plain", "ok");
 }
 
 void setPixelColor(int X, int Y, int R, int G, int B) {
@@ -156,4 +184,3 @@ void reifyWallState () {
     }
   }
 }
-
